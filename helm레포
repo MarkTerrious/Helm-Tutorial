@@ -1,0 +1,38 @@
+# 레포지토리 리스트 
+helm repo list
+
+# 레포지토리 업데이트
+helm repo update
+
+# 레포지토리 삭제
+helm repo remove [repo 이름]
+-> helm repo remove bitnami
+
+# 레포 추가
+helm repo add [repo 이름] [사이트]
+-> helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+# 현재 모든 레포에 chart 이름 있는지 검색.
+helm search repo [chart 이름]
+
+# 정보를 축약해서 나타낸다.
+helm search repo [chart 이름] --max-col-width 20
+
+# 버전 별로 확인
+helm search repo [chart 이름] --versions
+
+# 특정 레포의 chart 이름 검색
+helm search repo [repo]/[chart 이름]
+
+# 차트 정보 확인
+helm show chart [repo]/[chart 이름]
+-> helm show chart bitnami/wordpress
+
+- 밑으로 내리면 keywords 있는데 해당 키워드로 search 했을 때 
+해당 차트가 검색 된다.
+
+# 차트 ReadMe 내용 확인
+helm show readme [repo]/[chart 이름]
+
+# 차트 Values 확인
+helm show values [repo]/[chart 이름]

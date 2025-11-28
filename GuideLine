@@ -1,0 +1,15 @@
+# -------------- HELM ---------------
+유용한 사이트
+Artifact Hub
+
+# ----------------- 유틸 명령어 --------------------
+k expose deploy [배포된 deployment] [서비스 명령어]
+-> k expose deploy local-wp-wordpress --type=NodePort --name=local-wp  
+
+
+
+
+
+
+
+

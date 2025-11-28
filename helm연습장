@@ -1,0 +1,3 @@
+helm install local-wp bitnami/wordpress `
+  --set "mariadb.auth.rootPassword=myawesomepassword" `
+  --set "mariadb.auth.password=myuserpassword" 

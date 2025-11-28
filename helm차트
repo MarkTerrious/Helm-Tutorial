@@ -1,0 +1,28 @@
+# 차트 설치
+helm install [release 이름] [repo]/[chart 이름]
+-> helm install local-wp bitnami/wordpress
+
+- 참고로 release 이름은 사용자가 정하는 것. 
+
+# 차트 리스트 확인
+helm list 
+
+- 사용자가 release 이름으로 정한 것이 여기에 뜬다.
+
+# 차트 삭제
+helm uninstall [release 이름]
+
+# 차트 values 확인
+helm get values [release 이름]
+-> helm get values local-wp
+-> helm get values local-wp --all
+
+# 차트 노트 확인
+helm get notes [release 이름]
+-> helm get notes local-wp
+
+- 처음 설치했을 때 나오는 화면과 같다.
+
+# 차트 메타 데이터 확인
+helm get metadata [release 이름]
+
