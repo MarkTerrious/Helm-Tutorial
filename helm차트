@@ -4,6 +4,10 @@ helm install [release 이름] [repo]/[chart 이름]
 
 - 참고로 release 이름은 사용자가 정하는 것. 
 
+# 설치 할 때 yaml 파일 참고해서 설치
+helm install [release 이름] [repo]/[chart 이름] -f [참고 yaml]
+-> helm install local-wp bitnami/wordpress -f custom-values.yaml
+
 # 차트 리스트 확인
 helm list 
 
@@ -11,6 +15,51 @@ helm list
 
 # 차트 삭제
 helm uninstall [release 이름]
+
+# 차트 업그레이드
+helm upgrade [release] [repo]/[chart]
+-> helm upgrade --reuse-values --values [.yaml] [release] [repo]/[chart] 
+--> helm upgrade --reuse-values --values custom-values.yaml local-wp bitnami/wordpress
+--> 주의점 : 기본 값 중에서 삭제된 값이 있더라도 삭제 되지 않는다.
+
+-> --reuse-valuse : 현재 사용하는 값 그대로 두고 새로운 값만 머지
+-> --atomic : 업그레이드 실패 시 변경사항 롤백
+-> --cleanup-on-fail : 실패 시 정리
+-> --debug : 더 많은 자세한 정보 획득
+-> --timeout [] : timeout 기본 시간은 5분, 5분이 지나면 실패
+--> [] : 2h, 2m, 2s 
+--> --timeout 2m 
+
+종합 ( -f == --values ) 
+helm upgrade local-wp bitnami/wordpress `
+  --reuse-values `
+  -f custom-values.yaml `
+  --atomic `
+  --cleanup-on-fail `
+  --debug `
+  --timeout 2m `
+  --set "image.tag=nonexistent"
+
+--set : "[key]=[Value] 이 때 value 값이 null 이면 기본값 사용"
+주의 : 위 --set의 image.tag에 존재하지 않는 이미지를 넣는다면 실패 한다.
+주의 : --atomic 적용했고 실패 한다 하더라도 리소스가 사라지지 않는 것 존재.
+
+# 차트 버전 관리
+helm history [release name]
+-> --revision [version] : 태그를 넣을 시 이 버전을 가지고 활용하는 법 
+-> helm get values local-wp --revision 1
+
+# 차트 롤백
+helm rollback [release name] [revision number]
+-> helm rollback local-wp 2
+
+
+주의 : 롤백 한다 해서 모든게 사라지는 것이 아니다.!
+kubectl get rs
+kubectl get pvc
+kubectl get secrets
+
+# ------------ Chart 정보 확인 -------------
 
 # 차트 values 확인
 helm get values [release 이름]

@@ -3,9 +3,14 @@
 Artifact Hub
 
 # ----------------- 유틸 명령어 --------------------
+
+# CLI로 특정 Deployment에 관한 서비스 생성
 k expose deploy [배포된 deployment] [서비스 명령어]
 -> k expose deploy local-wp-wordpress --type=NodePort --name=local-wp  
 
+# CLI로
+k create secret generic [생성할 secret 이름] --from-literal [key]=[value]
+k create secret generic local-wp-credentials --from-literal wordpress-password=goodpassword
 
 
 

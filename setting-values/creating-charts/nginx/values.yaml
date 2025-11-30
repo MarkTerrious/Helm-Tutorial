@@ -1,0 +1,31 @@
+# Replica Count
+# Image, name, tag
+# Service Type, port
+
+## @param replicaCount 배포 시 컨테이너 복제본 실행 개수
+replicaCount: 1
+
+# NginX 이미지
+#
+## @param image.name 사용할 이미지 이름
+## @param image.tag 사용할 이미지 버전
+image:
+  name: nginx
+  tag: 1.29.0
+
+# NginX 컨테이너 port 
+#
+## @param containerPorts http
+containerPorts:
+  http: 80
+
+# NginX 서비스
+#
+## @param service.type Nginx 컨테이너 서비스 타입
+## @param service.port Nginx Service port
+## @param service.targetPort Nginx Container port
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8000
+

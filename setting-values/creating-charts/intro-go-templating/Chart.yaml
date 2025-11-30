@@ -1,0 +1,5 @@
+apiVersion: v2
+version: 0.1.0
+appVersion: 0.1.0
+name: intro-go-templating
+description: Write a Go go_template

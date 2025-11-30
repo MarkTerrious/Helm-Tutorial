@@ -1,0 +1,13 @@
+# 1. wordpress user name 설정 
+# 2. wordpress password 설정 
+# 3. 컨테이너 2개 설정
+
+wordpressUsername: dragon
+existingSecret: local-wp-credentials
+replicaCount: 1
+service:
+  type: NodePort
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3

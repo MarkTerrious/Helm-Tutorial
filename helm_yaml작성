@@ -1,0 +1,43 @@
+폴더 구성
+charts/           : 차트에 필요한 모든 파일들을 가지고있다.
+templates/        : 
+  test/           : helm test 명령어로 실행
+  Notes.txt       : helm install 시 콘솔에 출력되는 내용 작성
+  _helpers.tpl    : manifest파일 중복 줄이기 ( 쿠버 네티스 작성 양식 )
+
+--------------------------------------------------------------------
+간단 명령어
+--------------------------------------------------------------------
+helm template [폴더]
+-> helm template . (.은 현재 폴더)
+- template 은 templates 폴더의 yaml 매니페스트를 출력해준다.
+
+yaml 파일에서 
+{{/* */}} : GO 주석 파일로 template 출력 때 주석 표시 x
+{{- /* */}} : - 추가 시 원래 빈 줄 공간을 차지하던게 사라짐 
+              ( 반드시 -하고 스페이스 바 해야함, 안하면 에러 )
+
+
+{{.Values.test}} 이 컨텍스트에서 조건문, 반복문 루프 없다면
+3개의 최상위 객체를 의미
+
+최상위 객체 : Values, Release, Chart
+주의 : 사용시 .붙이고 사용 ( .Values.Name, .Release.Name, .Chart.Name )
+
+--------------------------------
+함수 사용
+--------------------------------
+{{ lower .Values.test }}            : 대문자를 소문자로
+{{ replace " " "-" .Values.test }}  : " "를 "-"로 바꾸어서 출력
+- ex) I am a strong -> I-am-a-string
+{{ replace " " "-" .Values.test | lower }} : |은 왼쪽 결과를 오른쪽으로 넣는다.
+
+세트
+{{ if [명령어] [Helm or Values 값] [비교 대상]}}
+environment: production
+{{ else }}
+environment: dev
+{{ end }}
+
+
+
