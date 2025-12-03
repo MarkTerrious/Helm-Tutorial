@@ -11,7 +11,9 @@ k expose deploy [배포된 deployment] [서비스 명령어]
 # CLI로
 k create secret generic [생성할 secret 이름] --from-literal [key]=[value]
 k create secret generic local-wp-credentials --from-literal wordpress-password=goodpassword
+k create secret generic [생성할 secret 이름] --from-env-file=[filename]
 
+kubectl get secret [secret 이름] -o jsonpath='{.data.[key]}' | base64 --decode
 
 
 

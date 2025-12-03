@@ -1,0 +1,8 @@
+helm repo index . : .(현재) 폴더에 모든 tgz 파일을 읽어서 차트들을 스캔, 
+                  차트 각각에 대한 정보를 추출하여 index.yaml에 저장
+                  helm search repo [차트 이름] 로 차트를 찾을 때 index.yaml 파일을 
+                  다운로드 하여 확인
+
+helm package [path] --version -u 
+--version : Chart.yaml 의 version 으로 패키징
+-u : 패키징 전 dependency 업데이트

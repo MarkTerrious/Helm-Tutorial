@@ -39,5 +39,161 @@ environment: production
 environment: dev
 {{ end }}
 
+------------------------------------------------------------------------------
+list를 yaml 형식으로 만들기
+------------------------------------------------------------------------------
+[key] : {{ list 1 2 3 | toYaml | nindent 2}}
+
+- nindent : 시작 시 new line 추가한 후, 현 위치에서 공백 2칸 삽입.
+list:
+  values:
+    example: {{ list 1 2 3 | toYaml | indent 2 }}
+
+=> (주의!) example 밑이 아니라 list 똑같은 라인에서 시작해서 공백 넣는 것.
+=> 2를 넣은 경우
+
+list:
+  values:
+    example:
+  - 1
+  - 2
+  - 3
+
+=> 공백을 잘 넣으면 example 밑으로 들어갈 수 있다.
+
+---------------------------------------------------
+Include
+---------------------------------------------------
+{{- define "" -}}
+ <---------- 내용 --------->
+{{- end -}}
+
+ex)
+{{- define "templating-deep-dive.fullname" -}}
+{{- printf "%s-%s" (.Values).Release.Name .Chart.Name | trunc 63 | trimSuffix "-"}}
+{{- end -}}
+
+-> trunc 63 : 63개의 문자만 받아들임
+-> trimSuffix "[제거값]" "[B 구간]": B 구간 맨뒤 접미사에 제거값이 있을 경우 제거.
+
+이렇게 정의시 manifest 파일에서
+name: {{ include "templating-deep-dive.fullname" . }} 
+  이렇게 불러 올 수 있다. 맨 뒤에 .(dot)은 모든 것을 불러온다는 뜻
+  즉 내용물 안에 정의된 것을 선택적으로 들고 올 수 있다.
+
+---------------------------------------------------
+변수 할당
+---------------------------------------------------
+{{$변수이름 := 값}} (새로 할당)
+{{$기존 변수 = 값}} ( 기존 변수에 재할당 )
+
+{{ .Values.services | default list }} 
+{{ .Values.services | default dict }} 
+=> services 라는 객체가 values.yaml에 없을 경우 null 대신 list 는 빈 목록을 얻는다.
+=> 예기치 못한 에러 방지.
+
+---------------------------------------------------
+범위 함수 
+---------------------------------------------------
+{{ range $인덱스 $실제요소 := 값}}
+{{ end }}
+-> {{ range $idx, $map := .Values.services | default list }}
+-> {{ range $key, $value := .Values.services | default dict }}
+-> (주의!) range 함수 스코프 내에서 .(dot)은 현재 컨텍스트를 의미한다.
+--> . 즉 value 값을 의미 
+-> 최상위 루트를 가리키려면 $사인으로 바꾸어주자. (루트, 최상위 객체를 의미한다.)
 
 
+---------------------------------------------------
+Chart.yaml
+---------------------------------------------------
+
+dependency:
+  - name: 
+    version:
+    repository:
+    condition: 
+    tag:
+      - 태그 이름1
+      - 태그 이름2
+    --> Values.yaml 에 condition 에 속한 오브젝트가 true일 경우 데이터 베이스 설치
+    --> Values.yaml 에 현 tag 안에 속한 것이 하나라도 true인 경우 데이터 베이스 설치
+    (주의!) condition 과 tag 둘 중 하나만 쓰자 .
+    
+    Values.yaml 에서는
+    postgresql:
+      enabled: false
+    
+    tag:
+      database: false
+      performance: true
+
+  - name: 서브 차트 정의 했을 때.
+    version:
+
+서브 차트가 변경될 때 마다.
+helm dependency update
+만약 실수로 압축 파일을 지웠다면...
+helm dependency build
+
+
+
+---------------------------------------------------
+Values.yaml
+---------------------------------------------------
+
+상위, 하위 Values.yaml에 동일한 값이 존재 한다면,
+상위 값으로 덮어쓴다.
+
+{{ include "" . }} 일 때 . 은 현재 컨텍스트 위주의 데이터를 넘긴다.
+하위 _helpers에서 define한 함수도 상위 차트에서 불러올 수 있다. 
+그러나 넘어가는 데이터는 다르다. 
+
+---------------------------------------------------
+ConfigMap 
+---------------------------------------------------
+
+{{ .File.Get "" | nindent }}
+"" 에 파일 경로와 파일
+
+ex1)  
+  application.properties: |-
+{{ .Files.Get "files/application.properties" | indent 4 }}
+  dev.properties: |-
+{{ .Files.Get "files/dev.properties" | indent 4 }}
+  prod.properties: |-
+{{ .Files.Get "files/prod.properties" | indent 4 }}
+
+ex2) Glob pattern
+{{- range $path, $_ := .Files.Glob "files/*.properties" }}
+  {{ base $path }}: |-
+{{ $.Files.Get $path | indent 4 }}
+{{- end }}
+
+ex3) Glob pattern 2
+{{ (.Files.Glob "files/*.properties").AsConfig | indent 2 }}
+{{ (.Files.Glob "files/*.properties").AsSecrets | indent 2 }}
+
+
+
+---------------------------------------------------
+Chart Hook
+---------------------------------------------------
+
+pre-/post-install
+pre-install: 템플릿이 렌더링된 후, Kubernetes에 리소스가 생성되기 전에 실행됩니다.
+post-install: 모든 리소스가 Kubernetes에 로드된 후에 실행됩니다.
+
+pre-/post-delete
+pre-delete: 삭제 요청 시, Kubernetes에서 리소스가 삭제되기 전에 실행됩니다.
+post-delete: 삭제 요청 시, 릴리스의 모든 리소스가 삭제된 후에 실행됩니다.
+
+pre-/post-upgrade
+pre-upgrade: 업그레이드 요청 시, 템플릿이 렌더링된 후, 리소스가 업데이트되기 전에 실행됩니다.
+post-upgrade: 업그레이드 요청 시, 모든 리소스가 업그레이드된 후에 실행됩니다.
+
+pre-/post-rollback
+pre-rollback: 롤백 요청 시, 템플릿이 렌더링된 후, 리소스가 롤백되기 전에 실행됩니다.
+post-rollback: 롤백 요청 시, 모든 리소스가 롤백된 후에 실행됩니다.
+
+test: helm test 하위 명령이 호출될 때 실행됩니다

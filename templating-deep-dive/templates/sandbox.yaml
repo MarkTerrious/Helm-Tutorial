@@ -1,0 +1,10 @@
+list:
+  values:
+    example: {{ list 1 2 3 | toYaml | nindent 6 }}
+
+my-dict: {{ 
+  dict "primitive" "my string" 
+  "complex" ( dict "nested-key" "nested-value" ) 
+  | toYaml 
+  | nindent 2
+}}

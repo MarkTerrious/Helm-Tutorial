@@ -1,0 +1,44 @@
+## @param customName 
+#         Defaults to {{.Release.Name}}-{{.Chart.Name}}
+customName: ""
+
+## @param replicaCount 배포 시 컨테이너 복제본 실행 개수
+replicaCount: 1
+
+environment: dev
+# NginX 이미지
+#
+## @param image.name 사용할 이미지 이름
+## @param image.tag 사용할 이미지 버전
+image:
+  name: nginx
+  tag: 1.29.0
+
+# NginX 보안 설정
+#
+## @param securityContext.enabled 
+## @param securityContext.runAsUser 
+## @param securityContext.fsGroup 
+securityContext:
+  enabled: true
+  runAsUser: 1000
+  fsGroup: 2000
+
+# NginX 컨테이너 port 
+#
+## @param containerPorts http
+containerPorts:
+  http: 80
+
+# NginX 서비스
+#
+## @param service[*].type Nginx 컨테이너 서비스 타입
+## @param service[*].port Nginx Service port
+service:
+  svc1:
+    type: ClusterIP
+    port: 0
+  svc2:
+    type: NodePort
+    port: 8001
+ 
