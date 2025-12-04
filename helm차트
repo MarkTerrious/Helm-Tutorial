@@ -40,6 +40,7 @@ helm upgrade local-wp bitnami/wordpress `
   --timeout 2m `
   --set "image.tag=nonexistent"
 
+--atomic : --rollback-on-failure 로 바뀜
 --set : "[key]=[Value] 이 때 value 값이 null 이면 기본값 사용"
 주의 : 위 --set의 image.tag에 존재하지 않는 이미지를 넣는다면 실패 한다.
 주의 : --atomic 적용했고 실패 한다 하더라도 리소스가 사라지지 않는 것 존재.
